@@ -39,16 +39,16 @@ exports.handler = function (event, context, callback) {
 
 			ddb.put({
 				TableName: 'hs_sort_table',
-				Item: { 
-				 'gender': gender,
-				 'username': username, 
-				 'last_known_lat': lat, 
-				 'last_updated_timestamp': currentTime, 
-				 'last_known_long': long 
-				 }
+				Item: {
+					'gender': gender,
+					'username': username,
+					'last_known_lat': lat,
+					'last_updated_timestamp': currentTime,
+					'last_known_long': long
+				}
 			}, function (err, data) {
-				console.log('err',err);
-		console.log('data',data);
+				console.log('err', err);
+				console.log('data', data);
 				if (err) {
 					callback(err, null);
 				} else {
