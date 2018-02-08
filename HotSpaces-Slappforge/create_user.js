@@ -13,11 +13,63 @@ exports.handler = function (event, context, callback) {
 	var password = JSON.parse(event.body).password;
 	var userAvatar = JSON.parse(event.body).user_avatar;
 	var contactNumber = JSON.parse(event.body).contact_number;
+	var headline = JSON.parse(event.body).headline;
+	var bio = JSON.parse(event.body).bio;
 	var lat = JSON.parse(event.body).last_known_lat;
 	var long = JSON.parse(event.body).last_known_long;
 	var currentTime = currentTimestamp.toLocaleString();
+	ddb.put({
+		TableName: 'hs_user',
+		Item: {
+			'username': username,
+			'first_name': firstName,
+			'last_name': lastName,
+			'age': age,
+			'gender': gender,
+			'interested_in': interestedIn,
+			'password': password,
+			'user_avatar': userAvatar,
+			'contact_number': contactNumber,
+			'headline': headline,
+			'bio': bio
+		}
+	}, function (err, data) {
+		console.log('err', err);
+		console.log('data', data);
+		if (err) {
+			callback(err, null);
+		} else {
+			ddb.put({
+				TableName: 'hs_sort_table',
+				Item: { 
+				'gender': gender, 
+				'username': username, 
+				'last_known_lat': lat, 
+				'last_updated_timestamp': currentTime, 
+				'last_known_long': long 
+				}
+			}, function (err, data) {
+				console.log('err',err);
+				console.log('data',data);
+				if (err) {
+					callback(err, null);
+				} else {
+				let response = {
+					"statusCode": 200,
+					"headers": {
+					"my_header": "my_value"
+					},
+					"body": JSON.stringify(data),
+					"isBase64Encoded": false
+				};
+				callback(null, response);
+				}
+			});
+
+
+		}
+	});
 
 
 
-	callback(null, 'Successfully executed');
 }
